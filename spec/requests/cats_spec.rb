@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Cats", type: :request do
-    describe "GET /index" do 
+    describe "GET /index" do
       it "returns an HTTPS status of success" do
         get cats_path
         expect(response).to have_http_status(200)
@@ -50,6 +50,28 @@ RSpec.describe "Cats", type: :request do
         expect(cat.image).to eq('https://images.unsplash.com/photo-1495360010541-f48722b34f7d?q=80&w=2836&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')
         expect(response).to have_http_status(200)
       end
+      it'returns a http status response error when making invalid updates to a cat' do
+        post cats_path, params: {
+        cat: {
+          name: 'Test cat for patch',
+          age: 7,
+          enjoys: 'Eating fish by the dock with his cat gang.',
+          image: 'https://images.unsplash.com/photo-1495360010541-f48722b34f7d?q=80&w=2836&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+          }
+        }
+        cat = Cat.where(name: 'Test cat for patch').first
+        patch cat_path(cat), params: {
+          cat: {
+          name: nil,
+          age: nil,
+          enjoys: nil,
+          image: nil
+          }
+        }
+        cat = Cat.where(name: nil).first
+        expect(cat).to eq(nil)
+        expect(response).to have_http_status(422)
+      end
     end
 
     describe "DELETE #destroy" do
@@ -66,3 +88,9 @@ RSpec.describe "Cats", type: :request do
     end
   end
 end
+
+
+# name:'Sam',
+#  age:5,
+# enjoys:'long walks on the beach',
+# image: 'https://images.unsplash.com/photo-1591271305449-8bc2c57b06ab?q=80&w=2835&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
