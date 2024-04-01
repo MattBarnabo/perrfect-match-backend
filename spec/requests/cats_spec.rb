@@ -22,6 +22,19 @@ RSpec.describe "Cats", type: :request do
       expect(cat.valid?).to eq(true)
       expect(response).to have_http_status(200)
     end
+    it 'returns a http status error for an invalid cat'do
+      post cats_path, params: {
+        cat: {
+          name: nil,
+          age: nil,
+          enjoys: nil,
+          image: nil,
+        }
+      }
+      cat = Cat.where(name: nil).first
+      expect(cat).to eq(nil)
+      expect(response).to have_http_status(422)
+      end
   end
 
   describe "PATCH /update" do
