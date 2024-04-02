@@ -64,3 +64,5 @@ end
 gem "rspec-rails", "~> 6.1"
 
 gem "rack-cors", "~> 2.0"
+
+gem "rubocop", "~> 1.62"
